@@ -176,3 +176,25 @@ functions:
       com.openfaas.scale.min: "0"
       com.openfaas.scale.max: "10"
       com.openfaas.scale.zero: "true"
+
+  onboarding:
+    lang: python3-http
+    handler: ./functions/onboarding
+    image: ${REGISTRY:-localhost:5000}/admission-onboarding:${TAG:-latest}
+    build_args:
+      ADDITIONAL_PACKAGE: tesseract-ocr tesseract-ocr-urd libgl1 libgomp1
+    environment:
+      <<: *env
+      AP_OLLAMA_URL: http://ollama.admission:11434
+      exec_timeout: 300s
+      write_timeout: 300s
+      read_timeout: 300s
+    secrets:
+      - database-url
+      - s3-access-key
+      - s3-secret-key
+      - platform-admin-key
+    labels:
+      com.openfaas.scale.min: "0"
+      com.openfaas.scale.max: "1"
+      com.openfaas.scale.zero: "true"
