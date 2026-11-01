@@ -1,3 +1,25 @@
+## v0.8.0 (2026-11-01)
+
+### Features
+
+- **infra**: add grafana dashboard for the pipeline
+- **infra**: add prometheus scrape config and pipeline alerts
+
+### Tests
+
+- **common**: cover postgres repositories and s3 against live services
+
+### Documentation
+
+- **infra**: add k3s, faasd and local deployment notes
+
+### Build
+
+- **infra**: add monitoring profile to the compose stack
+- **infra**: add kubernetes manifests for stateful dependencies
+- add make targets for local services and migrations
+- **infra**: add docker compose stack for local services
+
 ## v0.7.0 (2026-11-01)
 
 ### Features
