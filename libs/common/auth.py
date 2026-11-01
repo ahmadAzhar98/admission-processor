@@ -12,6 +12,7 @@ from pathlib import Path
 from typing import Protocol
 
 from common.errors import AuthenticationError, TenantNotFoundError
+from common.settings import OPENFAAS_SECRETS_DIR
 from common.tenant_config.loader import TenantRegistry
 from common.tenant_config.models import TenantConfig
 
@@ -94,3 +95,10 @@ class ApiKeyAuthenticator:
         if not expected or not hmac.compare_digest(hash_api_key(api_key), expected.lower()):
             raise AuthenticationError("invalid credentials")
         return config
+
+
+def default_authenticator(tenants: TenantRegistry) -> ApiKeyAuthenticator:
+    """Authenticator reading OpenFaaS secret files, then AP_SECRET_* variables."""
+    return ApiKeyAuthenticator(
+        tenants, ChainSecretSource(FileSecretSource(OPENFAAS_SECRETS_DIR), EnvSecretSource())
+    )

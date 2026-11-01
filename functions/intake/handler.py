@@ -7,7 +7,7 @@ Responds 202 for a new document and 200 for a duplicate upload.
 
 from typing import Any
 
-from common.auth import ApiKeyAuthenticator, ChainSecretSource, EnvSecretSource, FileSecretSource
+from common.auth import default_authenticator
 from common.http import (
     HttpEvent,
     Response,
@@ -18,7 +18,6 @@ from common.http import (
     parse_model,
 )
 from common.runtime import get_runtime
-from common.settings import OPENFAAS_SECRETS_DIR
 from common.tenant import RequestContext, bind_context
 
 from .service import UploadRequest, accept_upload
@@ -30,10 +29,9 @@ def handle(event: HttpEvent, context: Any) -> Response:
     if event.method.upper() != "POST":
         return json_response(405, {"error": "method_not_allowed"})
     rt = get_runtime()
-    authenticator = ApiKeyAuthenticator(
-        rt.tenants, ChainSecretSource(FileSecretSource(OPENFAAS_SECRETS_DIR), EnvSecretSource())
+    config = default_authenticator(rt.tenants).authenticate(
+        header(event, "X-Tenant-Id"), header(event, "X-Api-Key")
     )
-    config = authenticator.authenticate(header(event, "X-Tenant-Id"), header(event, "X-Api-Key"))
     request = parse_model(
         UploadRequest,
         {
