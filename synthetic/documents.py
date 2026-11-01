@@ -7,6 +7,7 @@ renderer draws the lines; the evaluator compares against the fields.
 """
 
 import random
+from collections.abc import Callable
 from dataclasses import dataclass, field
 from datetime import date, timedelta
 
@@ -32,6 +33,14 @@ LABELS: dict[str, tuple[str, str]] = {
     "group": ("Group", "گروپ"),
     "obtained_marks": ("Marks Obtained", "حاصل کردہ نمبر"),
     "total_marks": ("Total Marks", "کل نمبر"),
+    "test_name": ("Test", "ٹیسٹ"),
+    "score": ("Score", "اسکور"),
+    "total_score": ("Out of", "کل اسکور"),
+    "test_date": ("Test Date", "ٹیسٹ کی تاریخ"),
+    "challan_number": ("Challan No.", "چالان نمبر"),
+    "amount": ("Amount (Rs.)", "رقم (روپے)"),
+    "paid_date": ("Date of Payment", "تاریخ ادائیگی"),
+    "bank": ("Bank", "بینک"),
 }
 """English and Urdu captions per field."""
 
@@ -205,3 +214,79 @@ def fsc_result(applicant: Applicant, rng: random.Random, language: str) -> Docum
     """Build an FSc (HSSC) result card."""
     year = applicant.date_of_birth.year + 18
     return _result(applicant, rng, language, DocumentType.FSC_RESULT, year)
+
+
+ENTRY_TESTS = (("University Admission Test", 100.0), ("Engineering Entry Test", 400.0))
+BANKS = ("Bank A (synthetic)", "Bank B (synthetic)", "Bank C (synthetic)")
+
+
+def entry_test(applicant: Applicant, rng: random.Random, language: str) -> DocumentContent:
+    """Build an entry-test scorecard; the scale depends on the test."""
+    name, out_of = rng.choice(ENTRY_TESTS)
+    score = round(min(out_of, max(0.0, rng.gauss(0.55, 0.18) * out_of)), 1)
+    taken = date(2026, 7, 1) + timedelta(days=rng.randrange(45))
+    fields: dict[str, FieldValue] = {
+        "test_name": name,
+        "full_name": applicant.full_name,
+        "cnic_number": applicant.cnic_number,
+        "score": score,
+        "total_score": out_of,
+        "test_date": taken.isoformat(),
+    }
+    display = {"test_date": format_date(taken, "long")}
+    return DocumentContent(
+        document_type=DocumentType.ENTRY_TEST,
+        title="Result Card" if language != "ur" else "نتیجہ کارڈ",
+        issuer=f"{name} - Testing Service (synthetic)",
+        language=language,
+        layout="card",
+        fields=fields,
+        lines=_lines(fields, display, language, rng),
+    )
+
+
+def fee_challan(applicant: Applicant, rng: random.Random, language: str) -> DocumentContent:
+    """Build a paid bank fee challan."""
+    paid = date(2026, 6, 1) + timedelta(days=rng.randrange(100))
+    fields: dict[str, FieldValue] = {
+        "challan_number": f"{rng.randrange(10**9, 10**10)}",
+        "full_name": applicant.full_name,
+        "amount": rng.choice((2500, 3000, 5000, 5000, 6000)),
+        "paid_date": paid.isoformat(),
+        "bank": rng.choice(BANKS),
+    }
+    display = {"paid_date": format_date(paid, "slash"), "amount": f"{fields['amount']:,}/-"}
+    return DocumentContent(
+        document_type=DocumentType.FEE_CHALLAN,
+        title="Fee Challan - Paid" if language != "ur" else "فیس چالان",
+        issuer=str(fields["bank"]),
+        language=language,
+        layout="table",
+        fields=fields,
+        lines=_lines(fields, display, language, rng),
+    )
+
+
+Builder = Callable[[Applicant, random.Random, str], DocumentContent]
+
+BUILDERS: dict[DocumentType, Builder] = {
+    DocumentType.CNIC: cnic,
+    DocumentType.B_FORM: b_form,
+    DocumentType.MATRIC_RESULT: matric_result,
+    DocumentType.FSC_RESULT: fsc_result,
+    DocumentType.DOMICILE: domicile,
+    DocumentType.ENTRY_TEST: entry_test,
+    DocumentType.FEE_CHALLAN: fee_challan,
+}
+"""Builder for every classifiable document type."""
+
+
+def build_document(
+    document_type: DocumentType, applicant: Applicant, rng: random.Random, language: str
+) -> DocumentContent:
+    """Build content for ``document_type``.
+
+    Raises:
+        KeyError: For ``DocumentType.UNKNOWN``, which has no builder.
+    """
+    return BUILDERS[document_type](applicant, rng, language)

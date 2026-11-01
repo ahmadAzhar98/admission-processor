@@ -64,3 +64,29 @@ def test_marks_span_pass_and_fail():
         for c in (documents.fsc_result(APPLICANT, random.Random(s), "en") for s in range(300))
     ]
     assert min(percents) < 0.45 < 0.7 < max(percents)
+
+
+def test_every_known_type_has_a_builder():
+    expected = set(DocumentType) - {DocumentType.UNKNOWN}
+    assert set(documents.BUILDERS) == expected
+
+
+@pytest.mark.parametrize("document_type", sorted(documents.BUILDERS))
+def test_builders_are_deterministic(document_type):
+    a = documents.build_document(document_type, APPLICANT, random.Random(5), "mixed")
+    b = documents.build_document(document_type, APPLICANT, random.Random(5), "mixed")
+    assert a == b
+    assert a.document_type is document_type
+
+
+def test_entry_test_score_within_scale():
+    for seed in range(50):
+        fields = documents.entry_test(APPLICANT, random.Random(seed), "en").fields
+        assert 0 <= float(fields["score"]) <= float(fields["total_score"])
+        assert fields["cnic_number"] == APPLICANT.cnic_number
+
+
+def test_challan_prints_amount_with_separator():
+    content = documents.fee_challan(APPLICANT, random.Random(1), "en")
+    printed = dict(content.lines)["Amount (Rs.)"]
+    assert printed.endswith("/-") and isinstance(content.fields["amount"], int)
