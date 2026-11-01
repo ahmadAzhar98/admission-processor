@@ -1,3 +1,39 @@
+## v0.2.0 (2026-11-01)
+
+### Features
+
+- **tenant**: add university c high-volume private config
+- **tenant**: add university b public merit-based config
+- **tenant**: add university a selective private config
+- **tenant**: add config file loader and tenant registry
+- **tenant**: add root tenant config with cross-reference checks
+- **tenant**: add english and urdu notification templates
+- **tenant**: add declarative validation rule models
+- **tenant**: add field and document requirement specs
+- **common**: add postgres repositories
+- **common**: add repository interfaces with in-memory versions
+- **common**: add sql migration runner
+- **common**: add tenant-guarded database access
+- **common**: add initial postgres schema
+- **common**: add s3-compatible object store
+- **common**: add tenant-scoped object storage interface
+- **common**: add pipeline event schema
+- **common**: add step result schemas with confidence scores
+- **common**: add document type, status and identity models
+- **common**: add structured json logging
+- **common**: add tenant context propagation
+- **common**: add pii masking helpers
+- **common**: add environment-driven settings
+- **common**: add domain error hierarchy
+
+### Documentation
+
+- **tenant**: describe tenant config file structure
+
+### Build
+
+- allow untyped helper calls in tests
+
 ## v0.1.0 (2026-11-01)
 
 ### Documentation
