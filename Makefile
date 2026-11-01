@@ -13,6 +13,7 @@ setup: ## Create the virtualenv and install dev dependencies
 	$(PYTHON) -m venv $(VENV)
 	$(BIN)/pip install --upgrade pip
 	$(BIN)/pip install -e ".[dev]"
+	$(BIN)/pre-commit install
 
 lint: ## Run ruff lint and format checks
 	$(BIN)/ruff check .
