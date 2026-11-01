@@ -115,7 +115,7 @@ cross_checks:
 quality:
   min_width: 900
   min_height: 650
-  min_blur_score: 100
+  min_blur_score: 60
   max_skew_degrees: 5
 
 decision:

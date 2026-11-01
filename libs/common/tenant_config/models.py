@@ -20,17 +20,22 @@ class ConfigStatus(StrEnum):
 
 
 class QualityThresholds(BaseModel):
-    """Image-quality limits below which a re-upload is requested."""
+    """Image-quality limits below which a re-upload is requested.
+
+    Units follow the quality-check measures: ``min_blur_score`` is the
+    contrast-normalised Laplacian variance, brightness is the mean and
+    contrast the 1st-99th percentile spread of the 1000 px grayscale page.
+    """
 
     model_config = ConfigDict(frozen=True, extra="forbid")
 
     min_width: int = Field(default=800, gt=0)
     min_height: int = Field(default=600, gt=0)
-    min_blur_score: float = Field(default=100.0, ge=0)
+    min_blur_score: float = Field(default=60.0, ge=0)
     max_skew_degrees: float = Field(default=5.0, ge=0, le=45)
-    min_brightness: float = Field(default=50.0, ge=0, le=255)
-    max_brightness: float = Field(default=235.0, ge=0, le=255)
-    min_contrast: float = Field(default=25.0, ge=0)
+    min_brightness: float = Field(default=60.0, ge=0, le=255)
+    max_brightness: float = Field(default=252.0, ge=0, le=255)
+    min_contrast: float = Field(default=40.0, ge=0, le=255)
 
 
 class DecisionThresholds(BaseModel):

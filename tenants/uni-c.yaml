@@ -75,9 +75,9 @@ cross_checks:
 quality:
   min_width: 700
   min_height: 500
-  min_blur_score: 80
+  min_blur_score: 45
   max_skew_degrees: 8
-  min_contrast: 20
+  min_contrast: 35
 
 decision:
   classification_min_confidence: 0.65
