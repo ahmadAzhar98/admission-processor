@@ -84,3 +84,14 @@ functions:
       com.openfaas.scale.min: "0"
       com.openfaas.scale.max: "10"
       com.openfaas.scale.zero: "true"
+
+  validate:
+    lang: python3-http
+    handler: ./functions/validate
+    image: ${REGISTRY:-localhost:5000}/admission-validate:${TAG:-latest}
+    environment: *env
+    secrets: *secrets
+    labels:
+      com.openfaas.scale.min: "0"
+      com.openfaas.scale.max: "20"
+      com.openfaas.scale.zero: "true"
