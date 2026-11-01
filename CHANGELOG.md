@@ -1,3 +1,10 @@
+## v0.7.0 (2026-11-01)
+
+### Features
+
+- **tenant**: add onboarding handler storing drafts for approval
+- **tenant**: add llm-assisted tenant config drafting
+
 ## v0.6.0 (2026-11-01)
 
 ### Features
