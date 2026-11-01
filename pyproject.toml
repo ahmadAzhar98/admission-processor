@@ -26,6 +26,7 @@ dev = [
   "opencv-python-headless==5.0.0.93",
   "pillow==13.0.0",
   "pre-commit==4.7.0",
+  "pytesseract==0.3.13",
   "pytest==9.2.0",
   "pytest-cov==7.1.0",
   "ruff==0.17.3",
@@ -70,7 +71,7 @@ files = ["libs", "functions", "synthetic"]
 plugins = ["pydantic.mypy"]
 
 [[tool.mypy.overrides]]
-module = ["boto3", "boto3.*", "botocore", "botocore.*"]
+module = ["boto3", "boto3.*", "botocore", "botocore.*", "paddleocr", "pytesseract"]
 ignore_missing_imports = true
 
 [[tool.mypy.overrides]]
