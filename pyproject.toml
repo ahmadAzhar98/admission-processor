@@ -23,6 +23,7 @@ dev = [
   "commitizen==4.19.3",
   "mypy==2.4.1",
   "numpy==2.4.6",
+  "opencv-python-headless==5.0.0.93",
   "pillow==13.0.0",
   "pre-commit==4.7.0",
   "pytest==9.2.0",
@@ -56,7 +57,7 @@ allowed-confusables = ["۔", "،", "٫"]
 convention = "google"
 
 [tool.ruff.lint.per-file-ignores]
-"**/tests/**" = ["D", "S101"]
+"**/tests/**" = ["D", "S101", "S311"]
 # Seeded, reproducible randomness is the point of the generator.
 "synthetic/**" = ["S311"]
 
