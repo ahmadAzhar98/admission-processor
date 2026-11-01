@@ -141,3 +141,14 @@ functions:
     labels:
       com.openfaas.scale.min: "1"
       com.openfaas.scale.max: "3"
+
+  review-ui:
+    lang: dockerfile
+    handler: ./functions/review_ui
+    image: ${REGISTRY:-localhost:5000}/admission-review-ui:${TAG:-latest}
+    environment:
+      AP_REVIEW_API_URL: http://gateway.openfaas:8080/function/review-api
+    labels:
+      com.openfaas.scale.min: "0"
+      com.openfaas.scale.max: "2"
+      com.openfaas.scale.zero: "true"
