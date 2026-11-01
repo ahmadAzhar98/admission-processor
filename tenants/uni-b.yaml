@@ -1,0 +1,147 @@
+# University B: fictional public, merit-based university.
+# Provincial quota (Punjab domicile), engineering entry test, Urdu-first
+# notifications, and merit computed from verified marks.
+tenant_id: uni-b
+display_name: University B
+profile: Public merit-based university with provincial domicile quota
+admission_cycle: "2026"
+auth:
+  api_key_secret: uni-b-api-key
+
+documents:
+  - type: cnic
+    alternatives: [b_form]
+    fields:
+      - {name: cnic_number, pattern: '^\d{5}-\d{7}-\d$', pii: true, labels: [CNIC No., Identity Number, شناختی کارڈ نمبر]}
+      - {name: full_name, pii: true, labels: [Name, نام]}
+      - {name: father_name, pii: true, labels: [Father Name, والد کا نام]}
+      - {name: date_of_birth, type: date, pii: true, labels: [Date of Birth, تاریخ پیدائش]}
+  - type: b_form
+    required: false
+    fields:
+      - {name: b_form_number, pattern: '^\d{5}-\d{7}-\d$', pii: true, labels: [Registration No., B-Form No.]}
+      - {name: full_name, pii: true, labels: [Name, نام]}
+      - {name: father_name, pii: true, labels: [Father Name, والد کا نام]}
+      - {name: date_of_birth, type: date, pii: true, labels: [Date of Birth, تاریخ پیدائش]}
+  - type: matric_result
+    fields: &result_fields
+      - {name: full_name, pii: true, labels: [Name, Candidate Name, نام]}
+      - {name: father_name, pii: true, labels: [Father Name, والد کا نام]}
+      - {name: roll_number, pii: true, labels: [Roll No., رول نمبر]}
+      - {name: board, labels: [Board, بورڈ]}
+      - {name: passing_year, type: integer, labels: [Year, Session]}
+      - {name: obtained_marks, type: integer, labels: [Marks Obtained, Total Obtained, حاصل کردہ نمبر]}
+      - {name: total_marks, type: integer, labels: [Total Marks, کل نمبر]}
+  - type: fsc_result
+    fields: *result_fields
+  - type: domicile
+    fields:
+      - {name: full_name, pii: true, labels: [Name, نام]}
+      - {name: father_name, pii: true, labels: [Father Name, والد کا نام]}
+      - {name: district, labels: [District, ضلع]}
+      - {name: certificate_number, labels: [Certificate No., سرٹیفکیٹ نمبر]}
+      - {name: issue_date, type: date, labels: [Date of Issue, تاریخ اجراء]}
+  - type: entry_test
+    fields:
+      - {name: full_name, pii: true, labels: [Candidate Name]}
+      - {name: cnic_number, pattern: '^\d{5}-\d{7}-\d$', pii: true, labels: [CNIC]}
+      - {name: test_name, labels: [Test]}
+      - {name: score, type: number, labels: [Score]}
+      - {name: total_score, type: number, labels: [Out of, Maximum]}
+      - {name: test_date, type: date, labels: [Test Date]}
+  - type: fee_challan
+    fields:
+      - {name: challan_number, labels: [Challan No.]}
+      - {name: amount, type: integer, labels: [Amount, Rs.]}
+      - {name: paid_date, type: date, labels: [Date of Payment, Paid On]}
+
+rules:
+  - id: matric-min-60
+    description: Matric marks at least 60%
+    document: matric_result
+    type: min_percentage
+    obtained_field: obtained_marks
+    total_field: total_marks
+    min_percent: 60
+    severity: reject
+  - id: fsc-min-60
+    description: FSc marks at least 60%
+    document: fsc_result
+    type: min_percentage
+    obtained_field: obtained_marks
+    total_field: total_marks
+    min_percent: 60
+    severity: reject
+  - id: entry-test-min-33-percent
+    description: Entry test at least 132 out of 400 (33%)
+    document: entry_test
+    type: range
+    field: score
+    min: 132
+    max: 400
+    severity: reject
+  - id: punjab-domicile
+    description: Domicile issued by a Punjab district (provincial quota)
+    document: domicile
+    type: allowed_values
+    field: district
+    values: [Attock, Bahawalnagar, Bahawalpur, Bhakkar, Chakwal, Chiniot, Dera Ghazi Khan, Faisalabad, Gujranwala, Gujrat, Hafizabad, Jhang, Jhelum, Kasur, Khanewal, Khushab, Lahore, Layyah, Lodhran, Mandi Bahauddin, Mianwali, Multan, Muzaffargarh, Nankana Sahib, Narowal, Okara, Pakpattan, Rahim Yar Khan, Rajanpur, Rawalpindi, Sahiwal, Sargodha, Sheikhupura, Sialkot, Toba Tek Singh, Vehari]
+    severity: reject
+  - id: recognised-board
+    description: FSc from a recognised Punjab or federal board
+    document: fsc_result
+    type: allowed_values
+    field: board
+    values: [BISE Lahore, BISE Gujranwala, BISE Faisalabad, BISE Rawalpindi, BISE Multan, BISE Sargodha, BISE Bahawalpur, BISE Sahiwal, BISE Dera Ghazi Khan, Federal Board]
+  - id: fsc-recent
+    description: FSc passed in 2024 or later
+    document: fsc_result
+    type: range
+    field: passing_year
+    min: 2024
+  - id: fee-paid-in-window
+    description: Fee paid during the admission window
+    document: fee_challan
+    type: date_window
+    field: paid_date
+    not_before: 2026-07-01
+    not_after: 2026-08-31
+
+cross_checks:
+  - {field: full_name, documents: [cnic, matric_result, fsc_result, domicile, entry_test], method: fuzzy, min_similarity: 0.88}
+  - {field: father_name, documents: [cnic, matric_result, fsc_result, domicile], method: fuzzy, min_similarity: 0.88}
+  - {field: cnic_number, documents: [cnic, entry_test], method: exact, severity: reject}
+
+quality:
+  min_width: 900
+  min_height: 650
+  min_blur_score: 100
+  max_skew_degrees: 5
+
+decision:
+  classification_min_confidence: 0.75
+  auto_approve_min_confidence: 0.9
+  few_shot_examples: 3
+
+notifications:
+  default_language: ur
+  channel: sms
+  portal_url: https://admissions.university-b.example
+  templates:
+    received:
+      en: "{university}: {document_type} received for application {application_id}."
+      ur: "{university}: درخواست {application_id} کے لیے {document_type} موصول ہو گیا۔"
+    reupload_required:
+      en: "{university}: please re-upload your {document_type} ({reasons}) at {portal_url}."
+      ur: "{university}: براہ کرم اپنا {document_type} دوبارہ اپ لوڈ کریں ({reasons})۔ {portal_url}"
+    needs_review:
+      en: "{university}: application {application_id} is under manual verification."
+      ur: "{university}: درخواست {application_id} کی دستی تصدیق جاری ہے۔"
+    approved:
+      en: "{university}: application {application_id} verified and added to the merit list process."
+      ur: "{university}: درخواست {application_id} کی تصدیق ہو گئی ہے اور میرٹ لسٹ میں شامل کر لی گئی ہے۔"
+    rejected:
+      en: "{university}: application {application_id} is not eligible ({reasons})."
+      ur: "{university}: درخواست {application_id} اہل نہیں ہے ({reasons})۔"
+
+retention_days: 730
