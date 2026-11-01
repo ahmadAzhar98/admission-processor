@@ -1,7 +1,39 @@
-# OpenFaaS stack definition. Functions are added as they are implemented.
+# OpenFaaS stack definition. See docs/adr/0004-function-packaging.md for how
+# the shared library and tenant configs reach each function image.
 version: 1.0
 provider:
   name: openfaas
   gateway: ${OPENFAAS_URL:-http://127.0.0.1:8080}
 
-functions: {}
+configuration:
+  templates:
+    - name: python3-http
+      source: https://github.com/openfaas/python-flask-template
+  # Copied into every function's build context next to handler.py.
+  copy:
+    - ./libs
+    - ./tenants
+
+functions:
+  intake:
+    lang: python3-http
+    handler: ./functions/intake
+    image: ${REGISTRY:-localhost:5000}/admission-intake:${TAG:-latest}
+    environment: &env
+      PYTHONPATH: /home/app/function/libs
+      AP_TENANTS_DIR: /home/app/function/tenants
+      AP_GATEWAY_URL: http://gateway.openfaas:8080
+      AP_S3_ENDPOINT: http://seaweedfs-s3.admission:8333
+      max_inflight: "50"
+      write_timeout: 30s
+      read_timeout: 30s
+      exec_timeout: 30s
+    secrets: &secrets
+      - database-url
+      - s3-access-key
+      - s3-secret-key
+    labels: &labels
+      com.openfaas.scale.min: "1"
+      com.openfaas.scale.max: "20"
+    annotations:
+      topic: admission-intake
