@@ -1,0 +1,49 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+
+# Virtual environments
+.venv/
+venv/
+
+# Tool caches
+.mypy_cache/
+.ruff_cache/
+.pytest_cache/
+.coverage
+coverage.xml
+htmlcov/
+
+# Environment and secrets
+.env
+.env.*
+!.env.example
+secrets/
+
+# Generated synthetic datasets (regenerate from a seed instead of committing)
+synthetic/output/
+
+# Evaluation and load-test outputs
+results/
+
+# Model weights
+*.pt
+*.onnx
+*.pdparams
+models/
+
+# Editors and OS
+.idea/
+.vscode/
+.DS_Store
+
+# Local assistant state
+.claude/progress.md
+.claude/settings.local.json
+
+# OpenFaaS build output
+template/
