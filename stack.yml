@@ -165,3 +165,14 @@ functions:
       com.openfaas.scale.min: "0"
       com.openfaas.scale.max: "2"
       com.openfaas.scale.zero: "true"
+
+  notify:
+    lang: python3-http
+    handler: ./functions/notify
+    image: ${REGISTRY:-localhost:5000}/admission-notify:${TAG:-latest}
+    environment: *env
+    secrets: *secrets
+    labels:
+      com.openfaas.scale.min: "0"
+      com.openfaas.scale.max: "10"
+      com.openfaas.scale.zero: "true"
