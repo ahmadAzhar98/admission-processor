@@ -52,6 +52,22 @@ def test_caption_must_be_a_whole_word():
     assert extract_fields(REQ, _lines("Names of subjects: Physics")) == []
 
 
+def test_value_on_the_same_row_is_paired_with_its_caption():
+    # Box layout as Tesseract returns a two-column result card.
+    lines = [
+        OcrLine("Name", 0.96, (82, 328, 154, 348)),
+        OcrLine("Marks Obtained", 0.93, (80, 408, 244, 434)),
+        OcrLine("Usman Butt", 0.95, (542, 326, 697, 349)),
+        OcrLine("1,050", 0.9, (541, 406, 639, 434)),
+        OcrLine("Roll No.", 0.94, (81, 488, 225, 508)),
+    ]
+    fields = {f.name: f for f in extract_fields(REQ, lines)}
+    assert fields["full_name"].value == "Usman Butt"
+    assert fields["obtained_marks"].value == 1050
+    assert fields["obtained_marks"].confidence == 0.9
+    assert "roll_number" not in fields  # no value on that row
+
+
 def test_recall_on_synthetic_ground_truth_text():
     labels = generate(REGISTRY, ["uni-a", "uni-b", "uni-c"], 30, seed=21, out_dir=None)
     total, correct = 0, 0

@@ -38,6 +38,26 @@ def _has_colon(line: str, caption: str) -> bool:
     return rest.startswith(":")
 
 
+def same_row_value(caption_line: OcrLine, lines: list[OcrLine]) -> OcrLine | None:
+    """Return the nearest line to the right of ``caption_line`` on the same row.
+
+    OCR engines often return a table or card caption and its value as two
+    separate lines with overlapping vertical extent; this pairs them.
+    """
+    x0, y0, x1, y1 = caption_line.box
+    if (x0, y0, x1, y1) == (0, 0, 0, 0):
+        return None
+    centre, height = (y0 + y1) / 2, max(y1 - y0, 1)
+    candidates = [
+        ln
+        for ln in lines
+        if ln is not caption_line
+        and ln.box[0] >= x1
+        and abs((ln.box[1] + ln.box[3]) / 2 - centre) <= height * 0.6
+    ]
+    return min(candidates, key=lambda ln: ln.box[0], default=None)
+
+
 def extract_field(
     spec: FieldSpec, lines: list[OcrLine], all_captions: list[str]
 ) -> ExtractedField | None:
@@ -62,8 +82,13 @@ def extract_field(
         if longest is None or longest not in own:
             continue
         raw = _caption_value(line.text, longest) or ""
-        value = coerce(raw, spec.type)
         confidence = line.confidence
+        if not raw.strip():
+            neighbour = same_row_value(line, lines)
+            if neighbour is not None:
+                raw = neighbour.text
+                confidence = min(confidence, neighbour.confidence)
+        value = coerce(raw, spec.type)
         if value is None or (spec.pattern and not re.fullmatch(spec.pattern, str(value))):
             confidence *= PARSE_PENALTY
         if value is None and not raw:
