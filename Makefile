@@ -3,7 +3,7 @@ VENV ?= .venv
 BIN := $(VENV)/bin
 
 .DEFAULT_GOAL := help
-.PHONY: help setup lint typecheck test check format coverage clean
+.PHONY: help setup lint typecheck test test-integration check format coverage clean
 
 help: ## List available targets
 	@grep -E '^[a-zA-Z_-]+:.*?## ' $(MAKEFILE_LIST) | \
@@ -24,6 +24,9 @@ typecheck: ## Run mypy in strict mode
 
 test: ## Run unit tests (no network, no services)
 	$(BIN)/pytest -m "not integration"
+
+test-integration: ## Run integration tests (needs the docker compose stack)
+	$(BIN)/pytest -m integration
 
 check: lint typecheck test ## Lint, typecheck and test; must pass before every commit
 
