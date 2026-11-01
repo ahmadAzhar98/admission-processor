@@ -79,3 +79,10 @@ class UpstreamServiceError(AdmissionError):
 
     http_status = 502
     code = "upstream_error"
+
+
+class RecordNotFoundError(DatabaseError):
+    """No database row matches the requested tenant and ID."""
+
+    http_status = 404
+    code = "record_not_found"
