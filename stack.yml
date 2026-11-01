@@ -1,0 +1,7 @@
+# OpenFaaS stack definition. Functions are added as they are implemented.
+version: 1.0
+provider:
+  name: openfaas
+  gateway: ${OPENFAAS_URL:-http://127.0.0.1:8080}
+
+functions: {}
