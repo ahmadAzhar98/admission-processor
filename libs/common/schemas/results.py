@@ -70,3 +70,31 @@ class ExtractionResult(BaseModel):
     def confidence(self) -> float:
         """Weakest-link confidence: the minimum over all fields, 0 if none."""
         return min((f.confidence for f in self.fields), default=0.0)
+
+
+class RuleOutcome(BaseModel):
+    """Result of one validation rule or field check.
+
+    ``message`` explains the outcome without quoting personal data.
+    """
+
+    rule_id: str
+    passed: bool
+    severity: str
+    message: str
+
+
+class ValidationResult(BaseModel):
+    """All rule outcomes for one document."""
+
+    outcomes: list[RuleOutcome] = Field(default_factory=list)
+
+    @property
+    def failures(self) -> list[RuleOutcome]:
+        """Outcomes that did not pass."""
+        return [o for o in self.outcomes if not o.passed]
+
+    @property
+    def passed(self) -> bool:
+        """Whether every rule passed."""
+        return not self.failures
