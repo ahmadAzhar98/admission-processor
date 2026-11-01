@@ -28,6 +28,9 @@ dev = [
 [tool.setuptools.packages.find]
 where = ["libs"]
 
+[tool.setuptools.package-data]
+common = ["db/migrations/*.sql"]
+
 [tool.ruff]
 line-length = 100
 target-version = "py311"
