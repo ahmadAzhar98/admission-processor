@@ -55,6 +55,19 @@ flowchart LR
 
 Design decisions are recorded in [docs/adr/](docs/adr/).
 
+## Documentation
+
+| Document | Contents |
+| --- | --- |
+| [Architecture](docs/architecture.md) | Components, lifecycle and sequence diagrams, isolation, confidence |
+| [Functions](docs/functions.md) | Interface and behaviour of every function |
+| [Tenant configuration](docs/tenant-configuration.md) | Writing and validating a tenant file, onboarding |
+| [Deployment](docs/deployment.md) | Local, faasd and k3s deployments, sizing, scaling |
+| [Evaluation](docs/evaluation.md) | Measured results and what is still to be measured |
+| [Security and privacy](docs/security-privacy.md) | PII handling, controls, operator responsibilities |
+| [Limitations](docs/limitations.md) | Known limits and future work |
+| [Contributing](CONTRIBUTING.md) | Branching, commits, tests and review |
+
 ## Repository layout
 
 | Path | Contents |
@@ -69,19 +82,26 @@ Design decisions are recorded in [docs/adr/](docs/adr/).
 
 ## Getting started
 
-Requires Python 3.11+ and GNU Make.
+Requires Python 3.11+ and GNU Make. Docker is optional (integration tests,
+local services), and so is Tesseract (real OCR in the evaluation).
 
 ```bash
-make setup    # create .venv, install dev dependencies, install git hooks
-make check    # lint + typecheck + unit tests
-make help     # list all targets
+make setup                     # create .venv, install dev dependencies and git hooks
+make check                     # lint + strict typecheck + unit tests (incl. end-to-end)
+make synthetic APPLICATIONS=10 # generate a seeded synthetic dataset
+make up && make migrate        # PostgreSQL+pgvector, SeaweedFS, Redis, NATS
+make test-integration          # repositories and S3 against those services
+.venv/bin/python -m synthetic.evaluation.accuracy --ocr tesseract
+make help                      # list all targets
 ```
+
+To deploy on OpenFaaS, see [docs/deployment.md](docs/deployment.md).
 
 ## Contributing
 
 Work happens on short-lived branches with Conventional Commits; see
-[CLAUDE.md](CLAUDE.md) for the full workflow. `make check` must pass before
-every commit.
+[CONTRIBUTING.md](CONTRIBUTING.md). `make check` must pass before every
+commit.
 
 ## License
 
