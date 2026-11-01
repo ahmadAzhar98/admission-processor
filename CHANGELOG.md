@@ -1,3 +1,20 @@
+## v1.0.0 (2026-11-01)
+
+### Documentation
+
+- **docs**: link the documentation set from the readme
+- **docs**: add contributing guide with the git workflow
+- **docs**: document limitations and future work
+- **docs**: add deployment guide
+- **docs**: add security and privacy notes
+- **tenant**: add tenant configuration guide
+- **docs**: document every function's interface and behaviour
+- **docs**: add architecture overview with mermaid diagrams
+
+### Build
+
+- end major version zero ahead of the 1.0.0 release
+
 ## v0.9.0 (2026-11-01)
 
 ### Bug Fixes
