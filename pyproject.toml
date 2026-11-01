@@ -72,7 +72,7 @@ python_version = "3.11"
 strict = true
 mypy_path = "libs"
 explicit_package_bases = true
-files = ["libs", "functions", "synthetic", "load-tests"]
+files = ["libs", "functions", "synthetic", "load-tests", "infra/ci"]
 plugins = ["pydantic.mypy"]
 
 [[tool.mypy.overrides]]
@@ -120,7 +120,7 @@ chore = "Chores"
 revert = "Reverts"
 
 [tool.pytest.ini_options]
-testpaths = ["libs", "functions", "synthetic"]
+testpaths = ["libs", "functions", "synthetic", "infra"]
 pythonpath = [".", "libs"]
 addopts = "-ra --strict-markers"
 markers = [
