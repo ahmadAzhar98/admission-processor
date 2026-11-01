@@ -1,3 +1,19 @@
+## v0.5.0 (2026-11-01)
+
+### Features
+
+- **validate**: run rules in the pipeline and register the function
+- **validate**: add tenant rule evaluation engine
+- **extract**: wire handler and register function in the stack
+- **extract**: extract tenant fields in the pipeline step
+- **extract**: merge ocr and llm readings into confidence scores
+- **extract**: add schema-driven llm extraction with few-shot examples
+- **common**: provide the example repository through the runtime
+- **common**: add tenant few-shot example repository
+- **extract**: add caption-based extraction from ocr lines
+- **tenant**: list every printed caption in field labels
+- **extract**: add value normalisers for dates and amounts
+
 ## v0.4.0 (2026-11-01)
 
 ### Features
