@@ -40,11 +40,11 @@ synthetic: ## Generate a synthetic dataset (SEED, APPLICATIONS per tenant)
 
 COMPOSE := docker compose -f infra/compose/docker-compose.yml
 
-up: ## Start local services (add PROFILE=llm for Ollama)
+up: ## Start local services (PROFILE=llm for Ollama, PROFILE=monitoring for Grafana)
 	$(COMPOSE) $(if $(PROFILE),--profile $(PROFILE)) up -d
 
 down: ## Stop local services (data volumes are kept)
-	$(COMPOSE) --profile llm down
+	$(COMPOSE) --profile llm --profile monitoring down
 
 migrate: ## Apply database migrations to AP_DATABASE_URL
 	$(BIN)/python -m common.db.migrate
