@@ -11,7 +11,10 @@ from common.tenant import new_correlation_id
 
 
 class PipelineStep(StrEnum):
-    """Pipeline steps in processing order; values are OpenFaaS function names."""
+    """Pipeline steps in processing order; values are OpenFaaS function names.
+
+    ``FEEDBACK`` runs off the main path, after a reviewer resolves an item.
+    """
 
     INTAKE = "intake"
     QUALITY_CHECK = "quality-check"
@@ -21,6 +24,7 @@ class PipelineStep(StrEnum):
     CROSS_CHECK = "cross-check"
     DECIDE = "decide"
     NOTIFY = "notify"
+    FEEDBACK = "feedback"
 
 
 class PipelineEvent(BaseModel):
