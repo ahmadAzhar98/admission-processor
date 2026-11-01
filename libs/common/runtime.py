@@ -30,6 +30,11 @@ from common.repositories.postgres import (
     PostgresDocumentRepository,
     PostgresResultRepository,
 )
+from common.repositories.reviews import (
+    InMemoryReviewRepository,
+    PostgresReviewRepository,
+    ReviewRepository,
+)
 from common.settings import Settings, get_settings
 from common.storage import InMemoryObjectStore, ObjectStore, TenantStorage
 from common.storage.s3 import S3ObjectStore
@@ -48,6 +53,7 @@ class Runtime:
     audit: AuditRepository
     publisher: EventPublisher
     examples: ExampleRepository
+    reviews: ReviewRepository
     database: Database | None = None
     ocr: OcrEngine | None = None
     llm: LlmClient | None = None
@@ -90,6 +96,7 @@ def build_runtime(settings: Settings) -> Runtime:
         audit=PostgresAuditRepository(database),
         publisher=GatewayPublisher(settings.gateway_url),
         examples=PostgresExampleRepository(database),
+        reviews=PostgresReviewRepository(database),
         database=database,
     )
 
@@ -108,6 +115,7 @@ class InMemoryRuntime(Runtime):
     audit: InMemoryAuditRepository
     publisher: InMemoryPublisher
     examples: InMemoryExampleRepository
+    reviews: InMemoryReviewRepository
 
 
 def in_memory_runtime(tenants_dir: Path, settings: Settings | None = None) -> InMemoryRuntime:
@@ -122,6 +130,7 @@ def in_memory_runtime(tenants_dir: Path, settings: Settings | None = None) -> In
         audit=audit,
         publisher=InMemoryPublisher(),
         examples=InMemoryExampleRepository(),
+        reviews=InMemoryReviewRepository(),
     )
 
 
