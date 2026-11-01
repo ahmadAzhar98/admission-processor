@@ -11,6 +11,9 @@ from pathlib import Path
 
 from common.db.database import Database, connect_factory
 from common.events import EventPublisher, GatewayPublisher, InMemoryPublisher
+from common.llm import LlmClient, OllamaClient
+from common.ocr import OcrEngine
+from common.ocr.fallback import build_ocr_engine
 from common.repositories import AuditRepository, DocumentRepository, ResultRepository
 from common.repositories.memory import (
     InMemoryAuditRepository,
@@ -40,6 +43,29 @@ class Runtime:
     audit: AuditRepository
     publisher: EventPublisher
     database: Database | None = None
+    ocr: OcrEngine | None = None
+    llm: LlmClient | None = None
+
+    def get_ocr(self) -> OcrEngine:
+        """Return the OCR engine, building it from settings on first use.
+
+        Built lazily because loading PaddleOCR models takes seconds and only
+        the classify step needs it.
+        """
+        if self.ocr is None:
+            self.ocr = build_ocr_engine(self.settings)
+        return self.ocr
+
+    def get_llm(self) -> LlmClient:
+        """Return the LLM client, building it from settings on first use."""
+        if self.llm is None:
+            self.llm = OllamaClient(
+                self.settings.ollama_url,
+                self.settings.llm_model,
+                self.settings.embedding_model,
+                timeout=self.settings.http_timeout_seconds,
+            )
+        return self.llm
 
     def tenant_storage(self, tenant_id: str) -> TenantStorage:
         """Return storage restricted to ``tenant_id``'s key prefix."""

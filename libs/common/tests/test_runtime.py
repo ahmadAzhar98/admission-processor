@@ -41,3 +41,11 @@ def test_build_runtime_does_not_connect_eagerly():
     rt = runtime_module.build_runtime(Settings(tenants_dir=TENANTS))
     assert rt.database is not None
     rt.database.close()
+
+
+def test_ocr_and_llm_are_built_lazily_from_settings():
+    rt = in_memory_runtime(TENANTS, Settings(ocr_engine="tesseract", tenants_dir=TENANTS))
+    assert rt.ocr is None and rt.llm is None
+    assert rt.get_ocr().name == "tesseract"
+    assert rt.get_ocr() is rt.get_ocr()
+    assert rt.get_llm() is rt.get_llm()
