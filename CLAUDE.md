@@ -91,6 +91,27 @@ Format:
 - Keep PRs reviewable: aim for under ~400 changed lines.
 - All CI checks must pass before merge.
 
+### CI/CD (GitHub Actions)
+
+- `.github/workflows/ci.yml` runs `make check` on every push to `main` and on
+  every pull request, and validates PR commit messages with commitizen.
+- `.github/workflows/release.yml` runs only when a `vX.Y.Z` tag is pushed. It
+  checks that the tag matches the version in `pyproject.toml` and that
+  `make check` passes, then publishes one image per `stack.yml` function to
+  `ghcr.io/<owner>/admission-<function>:<version>` and creates the GitHub
+  Release from that version's `CHANGELOG.md` section.
+- Release procedure: on a `chore/release-vX.Y.Z` branch cut from `main`, run
+  `cz bump --increment <MINOR|PATCH|MAJOR>` (which updates the version and
+  CHANGELOG and creates the annotated tag). Merge it to `main` like any
+  branch, then push the tag: `git push origin vX.Y.Z`. Never create or push a
+  release tag by hand.
+- Workflows must never commit or push to the repository; `main` changes only
+  through reviewed merges. `infra/ci/tests/test_workflows.py` enforces this,
+  along with least-privilege permissions and pinned actions and tools. Change
+  the workflows and those tests together.
+- Release logic lives in `infra/ci/release_tools.py`, not in workflow shell,
+  so it is unit-tested.
+
 ## Code standards (Python 3.11+)
 
 - Format and lint with **ruff**; type-check with **mypy** (strict for `libs/` and `functions/`).

@@ -32,6 +32,19 @@ secrets hold SHA-256 hashes, never the keys themselves.
 
 ## Building and deploying functions
 
+Each release publishes ready-built images to GitHub Container Registry
+(`ghcr.io/<owner>/admission-<function>:<version>`). To deploy a release
+without building, point `faas-cli` at them:
+
+```bash
+REGISTRY=ghcr.io/<owner> TAG=1.1.0 faas-cli deploy -f stack.yml
+```
+
+Images are private by default for private repositories; give the cluster a
+pull secret, or make the packages public.
+
+To build from source instead:
+
 `faas-cli up -f stack.yml` builds every function with the shared library and
 tenant configs copied in (ADR 0004), pushes the images to `$REGISTRY`, and
 deploys them. Classify, extract and onboarding images install Tesseract with
