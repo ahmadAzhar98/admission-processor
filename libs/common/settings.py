@@ -44,6 +44,11 @@ class Settings(BaseSettings):
     http_timeout_seconds: float = Field(default=30.0, gt=0)
     max_upload_bytes: int = Field(default=10 * 1024 * 1024, gt=0)
 
+    ocr_engine: Literal["paddle", "tesseract", "paddle+tesseract"] = "paddle+tesseract"
+    paddle_lang: str = "en"
+    tesseract_lang: str = "eng"
+    ocr_min_confidence: float = Field(default=0.6, ge=0, le=1)
+
 
 def read_secret_files(secrets_dir: Path) -> dict[str, Any]:
     """Read secret fields from ``secrets_dir`` unless overridden by env vars.
