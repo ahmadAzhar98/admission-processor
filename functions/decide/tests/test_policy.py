@@ -77,3 +77,19 @@ def test_reupload_and_unclassified_documents():
     unclassified = _docs(**{"fee_challan": {"status": DocumentStatus.NEEDS_REVIEW}})
     decision = decide(REGISTRY.get("uni-c"), unclassified, [])
     assert decision.review_documents == {"d3": ["unclassified_or_not_accepted"]}
+
+
+def test_reviewer_verdicts_are_final():
+    approved = {"fsc_result": {"status": DocumentStatus.APPROVED, "extraction_confidence": 0.3}}
+    decision = decide(REGISTRY.get("uni-c"), _docs(**approved), [_fail("crosscheck:full_name")])
+    assert set(decision.review_documents) == {"d0", "d1"}
+    all_approved = {t: {"status": DocumentStatus.APPROVED} for t in UNI_C_TYPES}
+    assert (
+        decide(
+            REGISTRY.get("uni-c"), _docs(**all_approved), [_fail("crosscheck:full_name")]
+        ).outcome
+        is Outcome.APPROVED
+    )
+    rejected = {"fee_challan": {"status": DocumentStatus.REJECTED}}
+    decision = decide(REGISTRY.get("uni-c"), _docs(**rejected), [])
+    assert decision.outcome is Outcome.REJECTED and decision.reasons == ["reviewer_rejected"]

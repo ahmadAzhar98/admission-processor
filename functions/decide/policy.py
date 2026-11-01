@@ -10,6 +10,10 @@ An application is:
   cross-check failure, or a document the classifier could not place;
 * **approved** otherwise.
 
+A reviewer's verdict on a document is final: an approved document adds no
+further review reasons (including cross-check failures it is part of),
+and a rejected one rejects the application.
+
 Thresholds and severities come from the tenant config, so the same
 evidence can lead to different outcomes for different universities.
 """
@@ -66,6 +70,10 @@ def missing_documents(config: TenantConfig, present: set[DocumentType]) -> list[
 def _document_reasons(doc: DocumentEvidence, threshold: float) -> tuple[list[str], list[str]]:
     review: list[str] = []
     reject: list[str] = []
+    if doc.status is DocumentStatus.APPROVED:
+        return review, reject
+    if doc.status is DocumentStatus.REJECTED:
+        return review, ["reviewer_rejected"]
     if doc.status is DocumentStatus.NEEDS_REVIEW:
         review.append("unclassified_or_not_accepted")
         return review, reject
@@ -106,7 +114,10 @@ def decide(
         if review:
             review_docs[doc.document_id] = review
 
-    all_confident = all(d.extraction_confidence >= threshold for d in documents)
+    def trusted(doc: DocumentEvidence) -> bool:
+        return doc.status is DocumentStatus.APPROVED or doc.extraction_confidence >= threshold
+
+    all_confident = all(trusted(d) for d in documents)
     specs = {f"crosscheck:{c.field}": c for c in config.cross_checks}
     for check in (c for c in cross_checks if not c.passed):
         if check.severity == Severity.REJECT and all_confident:
@@ -114,6 +125,8 @@ def decide(
             continue
         spec = specs.get(check.rule_id)
         for doc in documents:
+            if doc.status is DocumentStatus.APPROVED:
+                continue
             if spec is None or doc.document_type in spec.documents:
                 review_docs.setdefault(doc.document_id, []).append(check.rule_id)
 
