@@ -61,10 +61,25 @@ def build_runtime(settings: Settings) -> Runtime:
     )
 
 
-def in_memory_runtime(tenants_dir: Path, settings: Settings | None = None) -> Runtime:
+@dataclass
+class InMemoryRuntime(Runtime):
+    """A runtime whose dependencies are the in-memory implementations.
+
+    Typed concretely so tests can inspect stored objects and published
+    events without casts.
+    """
+
+    storage: InMemoryObjectStore
+    documents: InMemoryDocumentRepository
+    results: InMemoryResultRepository
+    audit: InMemoryAuditRepository
+    publisher: InMemoryPublisher
+
+
+def in_memory_runtime(tenants_dir: Path, settings: Settings | None = None) -> InMemoryRuntime:
     """Wire in-memory dependencies for tests and local experiments."""
     audit = InMemoryAuditRepository()
-    return Runtime(
+    return InMemoryRuntime(
         settings=settings or Settings(environment="test", tenants_dir=tenants_dir),
         tenants=TenantRegistry(tenants_dir),
         storage=InMemoryObjectStore(),
