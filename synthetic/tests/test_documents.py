@@ -39,3 +39,28 @@ def test_urdu_labels_are_used():
 )
 def test_format_date(style, expected):
     assert documents.format_date(date(2007, 3, 5), style) == expected
+
+
+@pytest.mark.parametrize("builder", [documents.matric_result, documents.fsc_result])
+def test_result_cards_have_consistent_marks(builder):
+    for seed in range(50):
+        content = builder(APPLICANT, random.Random(seed), "en")
+        fields = content.fields
+        assert 0 < fields["obtained_marks"] < fields["total_marks"]
+        assert fields["board"] in documents.BOARDS
+        assert content.layout in documents.RESULT_LAYOUTS
+
+
+def test_fsc_follows_matric():
+    matric = documents.matric_result(APPLICANT, random.Random(1), "en")
+    fsc = documents.fsc_result(APPLICANT, random.Random(1), "en")
+    assert fsc.fields["passing_year"] == int(matric.fields["passing_year"]) + 2
+    assert "group" in fsc.fields and "group" not in matric.fields
+
+
+def test_marks_span_pass_and_fail():
+    percents = [
+        int(c.fields["obtained_marks"]) / int(c.fields["total_marks"])
+        for c in (documents.fsc_result(APPLICANT, random.Random(s), "en") for s in range(300))
+    ]
+    assert min(percents) < 0.45 < 0.7 < max(percents)

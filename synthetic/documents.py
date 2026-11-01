@@ -26,6 +26,12 @@ LABELS: dict[str, tuple[str, str]] = {
     "district": ("District", "ضلع"),
     "certificate_number": ("Certificate No.", "سرٹیفکیٹ نمبر"),
     "issue_date": ("Date of Issue", "تاریخ اجراء"),
+    "roll_number": ("Roll No.", "رول نمبر"),
+    "board": ("Board", "بورڈ"),
+    "passing_year": ("Session", "سیشن"),
+    "group": ("Group", "گروپ"),
+    "obtained_marks": ("Marks Obtained", "حاصل کردہ نمبر"),
+    "total_marks": ("Total Marks", "کل نمبر"),
 }
 """English and Urdu captions per field."""
 
@@ -136,3 +142,66 @@ def domicile(applicant: Applicant, rng: random.Random, language: str) -> Documen
         fields=fields,
         lines=_lines(fields, display, language, rng),
     )
+
+
+BOARDS = (
+    "BISE Lahore",
+    "BISE Gujranwala",
+    "BISE Faisalabad",
+    "BISE Rawalpindi",
+    "BISE Multan",
+    "BISE Sargodha",
+    "Federal Board",
+)
+RESULT_LAYOUTS = ("table", "card", "certificate")
+"""Board styles: a marks table, a compact result card, an ornate certificate."""
+
+FSC_GROUPS = ("Pre-Engineering", "Pre-Medical", "ICS", "Humanities")
+
+
+def _result(
+    applicant: Applicant,
+    rng: random.Random,
+    language: str,
+    document_type: DocumentType,
+    year: int,
+) -> DocumentContent:
+    board = rng.choice(BOARDS)
+    total = 1100 if year < 2025 else 1200
+    # Skewed towards passing, with a tail below every tenant's minimum.
+    obtained = min(total - 5, max(total // 3, int(rng.gauss(0.72, 0.13) * total)))
+    fields: dict[str, FieldValue] = {
+        "full_name": applicant.full_name,
+        "father_name": applicant.father_name,
+        "roll_number": f"{rng.randrange(100000, 999999)}",
+        "board": board,
+        "passing_year": year,
+    }
+    if document_type is DocumentType.FSC_RESULT:
+        fields["group"] = rng.choice(FSC_GROUPS)
+    fields["obtained_marks"] = obtained
+    fields["total_marks"] = total
+    is_fsc = document_type is DocumentType.FSC_RESULT
+    title_en = "Higher Secondary School Certificate" if is_fsc else "Secondary School Certificate"
+    title_ur = "انٹرمیڈیٹ نتیجہ کارڈ" if is_fsc else "میٹرک نتیجہ کارڈ"
+    return DocumentContent(
+        document_type=document_type,
+        title=title_ur if language == "ur" else f"{title_en} Examination {year}",
+        issuer=f"Board of Intermediate and Secondary Education ({board})",
+        language=language,
+        layout=rng.choice(RESULT_LAYOUTS),
+        fields=fields,
+        lines=_lines(fields, {}, language, rng),
+    )
+
+
+def matric_result(applicant: Applicant, rng: random.Random, language: str) -> DocumentContent:
+    """Build a Matric (SSC) result card two years before FSc."""
+    year = applicant.date_of_birth.year + 16
+    return _result(applicant, rng, language, DocumentType.MATRIC_RESULT, year)
+
+
+def fsc_result(applicant: Applicant, rng: random.Random, language: str) -> DocumentContent:
+    """Build an FSc (HSSC) result card."""
+    year = applicant.date_of_birth.year + 18
+    return _result(applicant, rng, language, DocumentType.FSC_RESULT, year)
