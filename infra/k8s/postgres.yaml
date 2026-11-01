@@ -1,0 +1,46 @@
+# Single-replica PostgreSQL with pgvector for a pilot. Production should use
+# a managed or operator-run cluster with backups (see docs/deployment.md).
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: postgres
+  namespace: admission
+spec:
+  serviceName: postgres
+  replicas: 1
+  selector:
+    matchLabels: {app: postgres}
+  template:
+    metadata:
+      labels: {app: postgres}
+    spec:
+      containers:
+        - name: postgres
+          image: pgvector/pgvector:0.8.0-pg16
+          ports: [{containerPort: 5432}]
+          env:
+            - {name: POSTGRES_DB, value: admission}
+            - {name: POSTGRES_USER, value: admission}
+            - name: POSTGRES_PASSWORD
+              valueFrom: {secretKeyRef: {name: postgres-credentials, key: password}}
+          readinessProbe:
+            exec: {command: ["pg_isready", "-U", "admission"]}
+            periodSeconds: 5
+          resources:
+            requests: {cpu: 250m, memory: 512Mi}
+            limits: {memory: 2Gi}
+          volumeMounts: [{name: data, mountPath: /var/lib/postgresql/data}]
+  volumeClaimTemplates:
+    - metadata: {name: data}
+      spec:
+        accessModes: [ReadWriteOnce]
+        resources: {requests: {storage: 20Gi}}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres
+  namespace: admission
+spec:
+  selector: {app: postgres}
+  ports: [{port: 5432}]

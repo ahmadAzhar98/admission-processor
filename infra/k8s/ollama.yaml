@@ -1,0 +1,45 @@
+# Ollama serves the LLM and embedding models inside the cluster, so no
+# document text leaves it. A GPU node is recommended; on CPU, prefer a
+# 3-7B instruct model and expect seconds per extraction.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ollama
+  namespace: admission
+spec:
+  replicas: 1
+  selector:
+    matchLabels: {app: ollama}
+  template:
+    metadata:
+      labels: {app: ollama}
+    spec:
+      containers:
+        - name: ollama
+          image: ollama/ollama:0.5.7
+          ports: [{containerPort: 11434}]
+          resources:
+            requests: {cpu: "2", memory: 8Gi}
+            limits: {memory: 16Gi}
+          volumeMounts: [{name: models, mountPath: /root/.ollama}]
+      volumes:
+        - name: models
+          persistentVolumeClaim: {claimName: ollama-models}
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: ollama-models
+  namespace: admission
+spec:
+  accessModes: [ReadWriteOnce]
+  resources: {requests: {storage: 30Gi}}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ollama
+  namespace: admission
+spec:
+  selector: {app: ollama}
+  ports: [{port: 11434}]
