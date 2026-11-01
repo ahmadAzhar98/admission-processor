@@ -53,6 +53,13 @@ class InvalidRequestError(AdmissionError):
     code = "invalid_request"
 
 
+class PayloadTooLargeError(InvalidRequestError):
+    """The uploaded file exceeds the size limit."""
+
+    http_status = 413
+    code = "payload_too_large"
+
+
 class StorageError(AdmissionError):
     """Object storage could not complete an operation."""
 

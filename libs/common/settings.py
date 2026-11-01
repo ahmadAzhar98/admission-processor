@@ -42,6 +42,7 @@ class Settings(BaseSettings):
     llm_model: str = "qwen2.5:7b-instruct"
     embedding_model: str = "nomic-embed-text"
     http_timeout_seconds: float = Field(default=30.0, gt=0)
+    max_upload_bytes: int = Field(default=10 * 1024 * 1024, gt=0)
 
 
 def read_secret_files(secrets_dir: Path) -> dict[str, Any]:
