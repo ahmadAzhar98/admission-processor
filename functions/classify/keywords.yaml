@@ -1,0 +1,43 @@
+# Cues for recognising document types from OCR text, in English and Urdu.
+# These describe the documents themselves, not any tenant's requirements,
+# so they are shared by all tenants. Phrases are matched case-insensitively
+# after whitespace is collapsed.
+#   strong:   phrases that nearly identify the type (weight 3)
+#   weak:     phrases common on the type but not unique to it (weight 1)
+#   negative: phrases that rule the type out (weight -3)
+#   layout:   page shape the type usually has: card, portrait (weight 1)
+cnic:
+  strong: [national identity card, identity number, قومی شناختی کارڈ, شناختی نمبر]
+  weak: [islamic republic of pakistan, gender, date of birth, جنس, تاریخ پیدائش]
+  negative: [child registration, testing service, challan]
+  layout: card
+b_form:
+  strong: [child registration certificate, registration no, ب فارم, رجسٹریشن نمبر]
+  weak: [national database and registration, date of birth, father name]
+  negative: [identity card]
+  layout: portrait
+matric_result:
+  strong: [secondary school certificate, میٹرک]
+  weak: [marks obtained, total marks, roll no, board of intermediate, رول نمبر, حاصل کردہ نمبر]
+  negative: [higher secondary, intermediate نتیجہ, انٹرمیڈیٹ, group]
+  layout: portrait
+fsc_result:
+  strong: [higher secondary school certificate, انٹرمیڈیٹ]
+  weak: [marks obtained, total marks, roll no, group, pre-engineering, pre-medical, ics, humanities, گروپ]
+  negative: [میٹرک]
+  layout: portrait
+domicile:
+  strong: [domicile, ڈومیسائل]
+  weak: [district officer, certificate no, date of issue, ضلع, تاریخ اجراء]
+  negative: []
+  layout: portrait
+entry_test:
+  strong: [entry test, admission test, testing service, ٹیسٹ]
+  weak: [score, out of, test date, result card, اسکور, نتیجہ کارڈ]
+  negative: [secondary school, challan]
+  layout: card
+fee_challan:
+  strong: [fee challan, challan no, چالان]
+  weak: [bank, amount, date of payment, rs., بینک, رقم, تاریخ ادائیگی]
+  negative: []
+  layout: portrait

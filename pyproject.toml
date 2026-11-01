@@ -51,7 +51,10 @@ select = [
   "D",    # docstrings on public API
 ]
 
-# Urdu text (templates, synthetic documents) legitimately uses these.
+# Urdu string literals (templates, keywords, synthetic documents) trip the
+# Latin-confusable check on ordinary letters, so it is off for strings;
+# comments and docstrings are still checked.
+ignore = ["RUF001"]
 allowed-confusables = ["۔", "،", "٫"]
 
 [tool.ruff.lint.pydocstyle]
