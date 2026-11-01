@@ -57,6 +57,7 @@ plugins = ["pydantic.mypy"]
 module = ["*.tests.*"]
 disallow_untyped_defs = false
 disallow_incomplete_defs = false
+disallow_untyped_calls = false
 
 [tool.commitizen]
 name = "cz_customize"
