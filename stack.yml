@@ -106,3 +106,14 @@ functions:
       com.openfaas.scale.min: "0"
       com.openfaas.scale.max: "10"
       com.openfaas.scale.zero: "true"
+
+  decide:
+    lang: python3-http
+    handler: ./functions/decide
+    image: ${REGISTRY:-localhost:5000}/admission-decide:${TAG:-latest}
+    environment: *env
+    secrets: *secrets
+    labels:
+      com.openfaas.scale.min: "0"
+      com.openfaas.scale.max: "10"
+      com.openfaas.scale.zero: "true"
