@@ -3,7 +3,7 @@ VENV ?= .venv
 BIN := $(VENV)/bin
 
 .DEFAULT_GOAL := help
-.PHONY: help setup lint typecheck test check
+.PHONY: help setup lint typecheck test check format coverage clean
 
 help: ## List available targets
 	@grep -E '^[a-zA-Z_-]+:.*?## ' $(MAKEFILE_LIST) | \
@@ -26,3 +26,14 @@ test: ## Run unit tests (no network, no services)
 	$(BIN)/pytest -m "not integration"
 
 check: lint typecheck test ## Lint, typecheck and test; must pass before every commit
+
+format: ## Apply ruff fixes and formatting
+	$(BIN)/ruff check --fix .
+	$(BIN)/ruff format .
+
+coverage: ## Run unit tests with a coverage report
+	$(BIN)/pytest -m "not integration" --cov=libs --cov=functions --cov-report=term-missing
+
+clean: ## Remove caches and build artifacts
+	rm -rf .mypy_cache .ruff_cache .pytest_cache .coverage htmlcov build dist
+	find . -name __pycache__ -type d -prune -exec rm -rf {} +
