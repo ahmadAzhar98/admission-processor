@@ -76,6 +76,23 @@ def body_bytes(event: HttpEvent) -> bytes:
     return body.encode("utf-8") if isinstance(body, str) else bytes(body or b"")
 
 
+def _invalid(exc: ValidationError) -> InvalidRequestError:
+    fields = sorted({".".join(str(p) for p in err["loc"]) for err in exc.errors()})
+    return InvalidRequestError(f"invalid fields: {fields}")
+
+
+def parse_model(model: type[M], data: Any) -> M:
+    """Validate request-derived ``data`` (e.g. from headers) into ``model``.
+
+    Raises:
+        InvalidRequestError: Naming the invalid fields, never their values.
+    """
+    try:
+        return model.model_validate(data)
+    except ValidationError as exc:
+        raise _invalid(exc) from exc
+
+
 def parse_body(event: HttpEvent, model: type[M]) -> M:
     """Parse the JSON body into ``model``.
 
@@ -85,8 +102,7 @@ def parse_body(event: HttpEvent, model: type[M]) -> M:
     try:
         return model.model_validate_json(body_bytes(event))
     except ValidationError as exc:
-        fields = sorted({".".join(str(p) for p in err["loc"]) for err in exc.errors()})
-        raise InvalidRequestError(f"invalid fields: {fields}") from exc
+        raise _invalid(exc) from exc
 
 
 Handler = Callable[[HttpEvent, Any], Response]
