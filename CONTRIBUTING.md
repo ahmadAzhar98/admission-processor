@@ -89,6 +89,18 @@ change.
 
 ## Releases
 
-Releases are tagged on `main` with SemVer by `cz bump` on a
-`chore/release-vX.Y.Z` branch. Commitizen generates `CHANGELOG.md`; never
-edit it by hand.
+Maintainers release from `main`:
+
+```bash
+git switch main && git pull --ff-only
+git switch -c chore/release-vX.Y.Z
+cz bump --increment MINOR --yes     # or PATCH / MAJOR; updates version + CHANGELOG, tags
+# open a PR, merge it with rebase-and-merge, then:
+git push origin vX.Y.Z
+```
+
+Pushing the tag starts `.github/workflows/release.yml`. It verifies the tag
+against `pyproject.toml`, runs `make check`, publishes every function image
+to `ghcr.io/<owner>/admission-<function>:<version>`, and creates the GitHub
+Release from the CHANGELOG. Commitizen generates `CHANGELOG.md`; never edit
+it by hand, and never create release tags by hand.
