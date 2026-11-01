@@ -26,5 +26,5 @@ def test_applicants_are_reproducible_from_seed():
 def test_applicant_is_plausible():
     applicant = make_applicant(random.Random(3), DISTRICTS)
     assert applicant.full_name.split()[-1] == applicant.father_name.split()[-1]
-    assert 2004 <= applicant.date_of_birth.year <= 2010
+    assert 2004 <= applicant.date_of_birth.year <= 2008
     assert applicant.district in DISTRICTS

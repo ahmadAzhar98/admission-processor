@@ -93,12 +93,16 @@ def cnic_number(rng: random.Random, gender: str) -> str:
 
 
 def make_applicant(rng: random.Random, districts: tuple[str, ...]) -> Applicant:
-    """Draw one fictional applicant aged roughly 16 to 22 in 2026."""
+    """Draw one fictional applicant aged 18 to 22 in 2026.
+
+    Birth years stop at 2008 so the derived FSc session (birth year + 18)
+    is never later than the 2026 admission cycle.
+    """
     gender = rng.choice(("male", "female"))
     given = rng.choice(MALE_NAMES if gender == "male" else FEMALE_NAMES)
     family = rng.choice(FAMILY_NAMES)
     father = f"{rng.choice(MALE_NAMES)} {family}"
-    dob = date(2004, 1, 1) + timedelta(days=rng.randrange(6 * 365))
+    dob = date(2004, 1, 1) + timedelta(days=rng.randrange(5 * 365))
     return Applicant(
         full_name=f"{given} {family}",
         father_name=father,

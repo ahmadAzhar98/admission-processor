@@ -90,3 +90,10 @@ def test_challan_prints_amount_with_separator():
     content = documents.fee_challan(APPLICANT, random.Random(1), "en")
     printed = dict(content.lines)["Amount (Rs.)"]
     assert printed.endswith("/-") and isinstance(content.fields["amount"], int)
+
+
+def test_exam_sessions_are_never_in_the_future():
+    for seed in range(300):
+        applicant = make_applicant(random.Random(seed), ("Lahore",))
+        fsc = documents.fsc_result(applicant, random.Random(seed), "en")
+        assert int(fsc.fields["passing_year"]) <= 2026
