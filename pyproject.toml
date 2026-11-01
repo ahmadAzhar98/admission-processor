@@ -9,7 +9,10 @@ description = "Multi-tenant, AI-assisted admission-document processing on OpenFa
 readme = "README.md"
 requires-python = ">=3.11"
 license = "MIT"
-dependencies = []
+dependencies = [
+  "pydantic==2.14.2",
+  "pydantic-settings==2.16.2",
+]
 
 [project.optional-dependencies]
 dev = [
@@ -48,6 +51,7 @@ strict = true
 mypy_path = "libs"
 explicit_package_bases = true
 files = ["libs"]
+plugins = ["pydantic.mypy"]
 
 [[tool.mypy.overrides]]
 module = ["*.tests.*"]
