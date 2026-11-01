@@ -152,3 +152,16 @@ functions:
       com.openfaas.scale.min: "0"
       com.openfaas.scale.max: "2"
       com.openfaas.scale.zero: "true"
+
+  feedback:
+    lang: python3-http
+    handler: ./functions/feedback
+    image: ${REGISTRY:-localhost:5000}/admission-feedback:${TAG:-latest}
+    environment:
+      <<: *env
+      AP_OLLAMA_URL: http://ollama.admission:11434
+    secrets: *secrets
+    labels:
+      com.openfaas.scale.min: "0"
+      com.openfaas.scale.max: "2"
+      com.openfaas.scale.zero: "true"
