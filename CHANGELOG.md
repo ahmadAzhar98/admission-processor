@@ -1,3 +1,37 @@
+## v0.4.0 (2026-11-01)
+
+### Features
+
+- **classify**: wire handler and register function in the stack
+- **classify**: classify uploads and route them onward
+- **classify**: add llm fallback for low-confidence documents
+- **classify**: add keyword and layout document classifier
+- **common**: expose ocr and llm clients through the runtime
+- **common**: add ollama llm client with structured json output
+- **common**: add paddleocr adapter with tesseract fallback
+- **common**: add tesseract ocr adapter
+- **common**: add ocr engine interface and result model
+- **quality**: wire handler with async step and sync precheck modes
+- **quality**: assess uploads against tenant thresholds
+- **quality**: add opencv blur, skew and contrast measures
+- **intake**: register intake in the openfaas stack
+- **intake**: wire openfaas handler with tenant authentication
+- **intake**: add upload validation and idempotent storage
+- **common**: add tenant api key authentication
+- **common**: add shared async pipeline step runner
+- **common**: add runtime dependency container
+- **common**: add event publisher over openfaas async invocations
+- **common**: add openfaas http handler adapter
+
+### Bug Fixes
+
+- **tenant**: calibrate quality thresholds to the measured metrics
+
+### Refactoring
+
+- **common**: extract the default tenant authenticator
+- **common**: type the in-memory runtime concretely
+
 ## v0.3.0 (2026-11-01)
 
 ### Features
