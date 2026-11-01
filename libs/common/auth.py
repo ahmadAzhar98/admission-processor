@@ -76,8 +76,13 @@ class ApiKeyAuthenticator:
         self._tenants = tenants
         self._secrets = secrets
 
-    def authenticate(self, tenant_id: str | None, api_key: str | None) -> TenantConfig:
+    def authenticate(
+        self, tenant_id: str | None, api_key: str | None, *, staff: bool = False
+    ) -> TenantConfig:
         """Return the tenant config if the key is valid.
+
+        With ``staff`` set, the key is checked against the tenant's staff
+        secret instead of the upload secret.
 
         Unknown tenants and wrong keys raise the same error, so the API does
         not reveal which tenant IDs exist.
@@ -91,7 +96,8 @@ class ApiKeyAuthenticator:
             config = self._tenants.get(tenant_id)
         except TenantNotFoundError as exc:
             raise AuthenticationError("invalid credentials") from exc
-        expected = self._secrets.read(config.auth.api_key_secret)
+        secret = config.auth.staff_api_key_secret if staff else config.auth.api_key_secret
+        expected = self._secrets.read(secret) if secret else None
         if not expected or not hmac.compare_digest(hash_api_key(api_key), expected.lower()):
             raise AuthenticationError("invalid credentials")
         return config

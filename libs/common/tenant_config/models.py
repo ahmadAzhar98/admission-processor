@@ -73,6 +73,14 @@ class AuthSettings(BaseModel):
     api_key_secret: str = Field(pattern=r"^[a-z0-9][a-z0-9-]*$")
     """OpenFaaS secret holding the SHA-256 hash of the tenant's API key."""
 
+    staff_api_key_secret: str | None = Field(default=None, pattern=r"^[a-z0-9][a-z0-9-]*$")
+    """Secret holding the hash of the staff key for the review API.
+
+    Kept separate from the upload key so a leaked portal credential cannot
+    read or change review decisions. Without it, staff endpoints refuse
+    every request for the tenant.
+    """
+
 
 class TenantConfig(BaseModel):
     """Everything that distinguishes one university's admission process."""

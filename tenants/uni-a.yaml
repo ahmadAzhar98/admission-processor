@@ -6,6 +6,7 @@ profile: Selective private university with its own admission test
 admission_cycle: "2026"
 auth:
   api_key_secret: uni-a-api-key
+  staff_api_key_secret: uni-a-staff-key
 
 documents:
   - type: cnic

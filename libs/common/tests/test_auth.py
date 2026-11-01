@@ -54,3 +54,17 @@ def test_secret_sources(tmp_path, monkeypatch):
     assert chain.read("uni-b-api-key") == "def"
     assert chain.read("uni-c-api-key") is None
     assert FileSecretSource(tmp_path).read("../x") is None
+
+
+def test_staff_key_is_separate_from_upload_key():
+    auth = ApiKeyAuthenticator(
+        TENANTS,
+        DictSecrets(
+            {"uni-a-api-key": hash_api_key("key-a"), "uni-a-staff-key": hash_api_key("staff-a")}
+        ),
+    )
+    assert auth.authenticate("uni-a", "staff-a", staff=True).tenant_id == "uni-a"
+    with pytest.raises(AuthenticationError):
+        auth.authenticate("uni-a", "key-a", staff=True)
+    with pytest.raises(AuthenticationError):
+        auth.authenticate("uni-a", "staff-a")

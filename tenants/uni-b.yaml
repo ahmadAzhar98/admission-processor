@@ -7,6 +7,7 @@ profile: Public merit-based university with provincial domicile quota
 admission_cycle: "2026"
 auth:
   api_key_secret: uni-b-api-key
+  staff_api_key_secret: uni-b-staff-key
 
 documents:
   - type: cnic
