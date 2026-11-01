@@ -1,3 +1,25 @@
+## v0.9.0 (2026-11-01)
+
+### Bug Fixes
+
+- **extract**: read values printed beside captions on the same row
+
+### Tests
+
+- **synthetic**: filter accuracy runs by language and profile
+- add cold versus warm latency measurement script
+- add k6 deadline-night burst script
+- **synthetic**: add paddleocr versus tesseract comparison script
+- **synthetic**: add accuracy evaluation script
+- **synthetic**: add accuracy metrics for the evaluation scripts
+- run every step end to end over synthetic applications
+- add an in-process pipeline runner
+
+### Documentation
+
+- **docs**: report measured evaluation results
+- **docs**: add serverless versus always-on cost methodology
+
 ## v0.8.0 (2026-11-01)
 
 ### Features
