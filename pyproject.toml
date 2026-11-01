@@ -54,13 +54,15 @@ convention = "google"
 
 [tool.ruff.lint.per-file-ignores]
 "**/tests/**" = ["D", "S101"]
+# Seeded, reproducible randomness is the point of the generator.
+"synthetic/**" = ["S311"]
 
 [tool.mypy]
 python_version = "3.11"
 strict = true
 mypy_path = "libs"
 explicit_package_bases = true
-files = ["libs"]
+files = ["libs", "synthetic"]
 plugins = ["pydantic.mypy"]
 
 [[tool.mypy.overrides]]
@@ -108,7 +110,7 @@ chore = "Chores"
 revert = "Reverts"
 
 [tool.pytest.ini_options]
-testpaths = ["libs"]
+testpaths = ["libs", "synthetic"]
 pythonpath = [".", "libs"]
 addopts = "-ra --strict-markers"
 markers = [
