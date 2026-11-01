@@ -76,7 +76,7 @@ files = ["libs", "functions", "synthetic"]
 plugins = ["pydantic.mypy"]
 
 [[tool.mypy.overrides]]
-module = ["boto3", "boto3.*", "botocore", "botocore.*", "paddleocr", "pytesseract"]
+module = ["boto3", "boto3.*", "botocore", "botocore.*", "paddleocr", "pytesseract", "streamlit"]
 ignore_missing_imports = true
 
 [[tool.mypy.overrides]]
