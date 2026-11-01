@@ -37,3 +37,14 @@ functions:
       com.openfaas.scale.max: "20"
     annotations:
       topic: admission-intake
+
+  quality-check:
+    lang: python3-http
+    handler: ./functions/quality_check
+    image: ${REGISTRY:-localhost:5000}/admission-quality-check:${TAG:-latest}
+    environment: *env
+    secrets: *secrets
+    labels:
+      com.openfaas.scale.min: "0"
+      com.openfaas.scale.max: "20"
+      com.openfaas.scale.zero: "true"
