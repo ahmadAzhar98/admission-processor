@@ -66,3 +66,21 @@ functions:
       com.openfaas.scale.min: "0"
       com.openfaas.scale.max: "10"
       com.openfaas.scale.zero: "true"
+
+  extract:
+    lang: python3-http
+    handler: ./functions/extract
+    image: ${REGISTRY:-localhost:5000}/admission-extract:${TAG:-latest}
+    build_args:
+      ADDITIONAL_PACKAGE: tesseract-ocr tesseract-ocr-urd libgl1 libgomp1
+    environment:
+      <<: *env
+      AP_OLLAMA_URL: http://ollama.admission:11434
+      exec_timeout: 120s
+      write_timeout: 120s
+      read_timeout: 120s
+    secrets: *secrets
+    labels:
+      com.openfaas.scale.min: "0"
+      com.openfaas.scale.max: "10"
+      com.openfaas.scale.zero: "true"

@@ -1,0 +1,14 @@
+# Runtime dependencies of libs/common used by this function (pinned).
+boto3==1.43.123
+httpx==0.28.1
+psycopg[binary]==3.3.6
+pydantic==2.14.2
+pydantic-settings==2.16.2
+pyyaml==6.0.3
+# OCR is normally reused from classify; these cover re-extraction when the
+# stored OCR output is missing (tesseract binary via ADDITIONAL_PACKAGE).
+numpy==2.4.6
+pillow==13.0.0
+paddleocr==3.3.2
+paddlepaddle==3.2.1
+pytesseract==0.3.13
