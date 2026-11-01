@@ -72,7 +72,7 @@ python_version = "3.11"
 strict = true
 mypy_path = "libs"
 explicit_package_bases = true
-files = ["libs", "functions", "synthetic"]
+files = ["libs", "functions", "synthetic", "load-tests"]
 plugins = ["pydantic.mypy"]
 
 [[tool.mypy.overrides]]
