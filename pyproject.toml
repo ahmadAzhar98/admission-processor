@@ -21,6 +21,8 @@ dependencies = [
 dev = [
   "commitizen==4.19.3",
   "mypy==2.4.1",
+  "numpy==2.4.6",
+  "pillow==13.0.0",
   "pre-commit==4.7.0",
   "pytest==9.2.0",
   "pytest-cov==7.1.0",
