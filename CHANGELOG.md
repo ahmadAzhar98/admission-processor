@@ -1,3 +1,37 @@
+## v0.6.0 (2026-11-01)
+
+### Features
+
+- **notify**: send tenant templates once per subject and event
+- **notify**: add pluggable log and webhook channels
+- **common**: add notification log for exactly-once sends
+- **ui**: add feedback learner storing corrections as examples
+- **ui**: add streamlit staff review page
+- **decide**: treat reviewer verdicts as final evidence
+- **ui**: add fastapi review queue api
+- **ui**: add review resolution service
+- **tenant**: add a staff credential separate from the upload key
+- **decide**: wire handler and register function in the stack
+- **decide**: apply decisions, open reviews and audit outcomes
+- **decide**: add decision policy over collected evidence
+- **common**: add review queue repository
+- **crosscheck**: wire handler and register function in the stack
+- **crosscheck**: compare fields once an application is complete
+- **crosscheck**: add fuzzy name and exact identifier matching
+
+### Bug Fixes
+
+- **infra**: mount tenant api key secrets for intake and precheck
+
+### Documentation
+
+- **docs**: record the idempotency strategy in adr 0006
+
+### Build
+
+- **infra**: package the streamlit review ui
+- **infra**: package the review api with the dockerfile template
+
 ## v0.5.0 (2026-11-01)
 
 ### Features
