@@ -1,0 +1,9 @@
+{
+  "identities": [
+    {
+      "name": "admission-dev",
+      "credentials": [{"accessKey": "admission", "secretKey": "admission-secret"}],
+      "actions": ["Admin", "Read", "Write", "List", "Tagging"]
+    }
+  ]
+}
