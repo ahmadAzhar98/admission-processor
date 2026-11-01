@@ -45,3 +45,30 @@ def test_apply_is_reproducible():
     assert pa == pb
     assert [p["name"] for p in pa] == names
     assert a.tobytes() == b.tobytes()
+
+
+def test_phone_photo_shows_desk_at_edges():
+    out, params = augment.phone_photo(_page(), random.Random(7))
+    corner = out.getpixel((2, 2))
+    assert corner != (245, 245, 240)
+    assert 0.78 <= params["scale"] <= 0.92
+
+
+def test_profiles_cover_all_kinds():
+    rng = random.Random(0)
+    seen = {augment.choose_augmentations(rng)[0] for _ in range(400)}
+    assert seen == set(augment.PROFILES)
+
+
+@pytest.mark.parametrize(
+    ("applied", "severe"),
+    [
+        ([], False),
+        ([{"name": "blur", "radius": 3.0}], True),
+        ([{"name": "blur", "radius": 1.0}], False),
+        ([{"name": "skew", "angle": -8.0}], True),
+        ([{"name": "jpeg", "quality": 20}], False),
+    ],
+)
+def test_is_severe(applied, severe):
+    assert augment.is_severe(applied) is severe
