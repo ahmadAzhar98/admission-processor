@@ -28,11 +28,14 @@ functions:
       write_timeout: 30s
       read_timeout: 30s
       exec_timeout: 30s
-    secrets: &secrets
+    secrets: &auth_secrets
       - database-url
       - s3-access-key
       - s3-secret-key
-    labels: &labels
+      - uni-a-api-key
+      - uni-b-api-key
+      - uni-c-api-key
+    labels:
       com.openfaas.scale.min: "1"
       com.openfaas.scale.max: "20"
     annotations:
@@ -43,7 +46,7 @@ functions:
     handler: ./functions/quality_check
     image: ${REGISTRY:-localhost:5000}/admission-quality-check:${TAG:-latest}
     environment: *env
-    secrets: *secrets
+    secrets: *auth_secrets
     labels:
       com.openfaas.scale.min: "0"
       com.openfaas.scale.max: "20"
@@ -61,7 +64,10 @@ functions:
       exec_timeout: 120s
       write_timeout: 120s
       read_timeout: 120s
-    secrets: *secrets
+    secrets: &secrets
+      - database-url
+      - s3-access-key
+      - s3-secret-key
     labels:
       com.openfaas.scale.min: "0"
       com.openfaas.scale.max: "10"
