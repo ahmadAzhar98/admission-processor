@@ -123,3 +123,21 @@ functions:
       com.openfaas.scale.min: "0"
       com.openfaas.scale.max: "10"
       com.openfaas.scale.zero: "true"
+
+  review-api:
+    lang: dockerfile
+    handler: ./functions/review_api
+    image: ${REGISTRY:-localhost:5000}/admission-review-api:${TAG:-latest}
+    environment:
+      <<: *env
+      PYTHONPATH: /home/app/function/libs:/home/app
+    secrets:
+      - database-url
+      - s3-access-key
+      - s3-secret-key
+      - uni-a-staff-key
+      - uni-b-staff-key
+      - uni-c-staff-key
+    labels:
+      com.openfaas.scale.min: "1"
+      com.openfaas.scale.max: "3"
