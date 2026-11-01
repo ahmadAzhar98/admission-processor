@@ -82,7 +82,12 @@ def score_extraction(
 
 def evaluate(args: argparse.Namespace) -> dict[str, Any]:
     """Run the evaluation and return a JSON-serialisable report."""
-    labels = read_manifest(args.dataset)
+    labels = [
+        lbl
+        for lbl in read_manifest(args.dataset)
+        if (not args.language or lbl.language in args.language)
+        and (not args.profile or lbl.profile in args.profile)
+    ]
     registry = TenantRegistry(args.tenants_dir)
     ocr = make_ocr(args.ocr, labels, args.dataset)
     rt = in_memory_runtime(args.tenants_dir)
@@ -177,6 +182,8 @@ def main(argv: list[str] | None = None) -> None:
     )
     parser.add_argument("--llm", default="none", choices=["none", "ollama"])
     parser.add_argument("--corrections", type=float, default=0.5)
+    parser.add_argument("--language", action="append", choices=["en", "ur", "mixed"])
+    parser.add_argument("--profile", action="append", choices=["clean", "mild", "phone", "severe"])
     parser.add_argument("--out", type=Path, default=Path("results/accuracy.json"))
     args = parser.parse_args(argv)
     configure_logging("WARNING")

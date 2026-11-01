@@ -18,9 +18,27 @@ def test_ground_truth_run_produces_a_complete_report(tmp_path):
         llm="none",
         corrections=0.5,
         out=tmp_path / "r.json",
+        language=None,
+        profile=None,
     )
     report = evaluate(args)
     assert report["classification"]["overall"] == 1.0
     assert report["extraction_before"]["overall"] >= 0.95
     assert report["extraction_after"] is None  # needs an LLM
     assert {"precision", "recall"} <= set(report["quality"])
+
+
+def test_filters_restrict_documents(tmp_path):
+    labels = generate(TenantRegistry(TENANTS), ["uni-c"], 3, seed=3, out_dir=tmp_path)
+    args = argparse.Namespace(
+        dataset=tmp_path,
+        tenants_dir=TENANTS,
+        ocr="ground-truth",
+        llm="none",
+        corrections=0.5,
+        out=tmp_path / "r.json",
+        language=["en"],
+        profile=None,
+    )
+    report = evaluate(args)
+    assert report["settings"]["documents"] == sum(1 for lbl in labels if lbl.language == "en")
