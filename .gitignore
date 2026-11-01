@@ -47,3 +47,6 @@ models/
 
 # OpenFaaS build output
 template/
+
+# Load-test payload index (points at local synthetic images)
+load-tests/payloads/
