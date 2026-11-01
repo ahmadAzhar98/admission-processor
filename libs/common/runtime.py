@@ -15,6 +15,11 @@ from common.llm import LlmClient, OllamaClient
 from common.ocr import OcrEngine
 from common.ocr.fallback import build_ocr_engine
 from common.repositories import AuditRepository, DocumentRepository, ResultRepository
+from common.repositories.examples import (
+    ExampleRepository,
+    InMemoryExampleRepository,
+    PostgresExampleRepository,
+)
 from common.repositories.memory import (
     InMemoryAuditRepository,
     InMemoryDocumentRepository,
@@ -42,6 +47,7 @@ class Runtime:
     results: ResultRepository
     audit: AuditRepository
     publisher: EventPublisher
+    examples: ExampleRepository
     database: Database | None = None
     ocr: OcrEngine | None = None
     llm: LlmClient | None = None
@@ -83,6 +89,7 @@ def build_runtime(settings: Settings) -> Runtime:
         results=PostgresResultRepository(database),
         audit=PostgresAuditRepository(database),
         publisher=GatewayPublisher(settings.gateway_url),
+        examples=PostgresExampleRepository(database),
         database=database,
     )
 
@@ -100,6 +107,7 @@ class InMemoryRuntime(Runtime):
     results: InMemoryResultRepository
     audit: InMemoryAuditRepository
     publisher: InMemoryPublisher
+    examples: InMemoryExampleRepository
 
 
 def in_memory_runtime(tenants_dir: Path, settings: Settings | None = None) -> InMemoryRuntime:
@@ -113,6 +121,7 @@ def in_memory_runtime(tenants_dir: Path, settings: Settings | None = None) -> In
         results=InMemoryResultRepository(),
         audit=audit,
         publisher=InMemoryPublisher(),
+        examples=InMemoryExampleRepository(),
     )
 
 
