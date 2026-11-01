@@ -12,14 +12,14 @@ documents:
   - type: cnic
     alternatives: [b_form]
     fields:
-      - {name: cnic_number, pattern: '^\d{5}-\d{7}-\d$', pii: true, labels: [CNIC No., Identity Number, شناختی کارڈ نمبر]}
+      - {name: cnic_number, pattern: '^\d{5}-\d{7}-\d$', pii: true, labels: [CNIC No., Identity Number, شناختی کارڈ نمبر, شناختی نمبر]}
       - {name: full_name, pii: true, labels: [Name, نام]}
       - {name: father_name, pii: true, labels: [Father Name, والد کا نام]}
       - {name: date_of_birth, type: date, pii: true, labels: [Date of Birth, تاریخ پیدائش]}
   - type: b_form
     required: false
     fields:
-      - {name: b_form_number, pattern: '^\d{5}-\d{7}-\d$', pii: true, labels: [Registration No., B-Form No.]}
+      - {name: b_form_number, pattern: '^\d{5}-\d{7}-\d$', pii: true, labels: [Registration No., B-Form No., رجسٹریشن نمبر]}
       - {name: full_name, pii: true, labels: [Name, نام]}
       - {name: father_name, pii: true, labels: [Father Name, والد کا نام]}
       - {name: date_of_birth, type: date, pii: true, labels: [Date of Birth, تاریخ پیدائش]}
@@ -29,7 +29,7 @@ documents:
       - {name: father_name, pii: true, labels: [Father Name, والد کا نام]}
       - {name: roll_number, pii: true, labels: [Roll No., رول نمبر]}
       - {name: board, labels: [Board, بورڈ]}
-      - {name: passing_year, type: integer, labels: [Year, Session]}
+      - {name: passing_year, type: integer, labels: [Year, Session, سیشن]}
       - {name: obtained_marks, type: integer, labels: [Marks Obtained, Total Obtained, حاصل کردہ نمبر]}
       - {name: total_marks, type: integer, labels: [Total Marks, کل نمبر]}
   - type: fsc_result
@@ -43,17 +43,17 @@ documents:
       - {name: issue_date, type: date, labels: [Date of Issue, تاریخ اجراء]}
   - type: entry_test
     fields:
-      - {name: full_name, pii: true, labels: [Candidate Name]}
-      - {name: cnic_number, pattern: '^\d{5}-\d{7}-\d$', pii: true, labels: [CNIC]}
-      - {name: test_name, labels: [Test]}
-      - {name: score, type: number, labels: [Score]}
-      - {name: total_score, type: number, labels: [Out of, Maximum]}
-      - {name: test_date, type: date, labels: [Test Date]}
+      - {name: full_name, pii: true, labels: [Candidate Name, Name, نام]}
+      - {name: cnic_number, pattern: '^\d{5}-\d{7}-\d$', pii: true, labels: [CNIC, Identity Number, شناختی نمبر]}
+      - {name: test_name, labels: [Test, ٹیسٹ]}
+      - {name: score, type: number, labels: [Score, اسکور]}
+      - {name: total_score, type: number, labels: [Out of, Maximum, کل اسکور]}
+      - {name: test_date, type: date, labels: [Test Date, ٹیسٹ کی تاریخ]}
   - type: fee_challan
     fields:
-      - {name: challan_number, labels: [Challan No.]}
-      - {name: amount, type: integer, labels: [Amount, Rs.]}
-      - {name: paid_date, type: date, labels: [Date of Payment, Paid On]}
+      - {name: challan_number, labels: [Challan No., چالان نمبر]}
+      - {name: amount, type: integer, labels: [Amount, Rs., Amount (Rs.), رقم (روپے)]}
+      - {name: paid_date, type: date, labels: [Date of Payment, Paid On, تاریخ ادائیگی]}
 
 rules:
   - id: matric-min-60
