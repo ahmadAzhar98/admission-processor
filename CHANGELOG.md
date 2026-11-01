@@ -1,3 +1,26 @@
+## v0.3.0 (2026-11-01)
+
+### Features
+
+- **synthetic**: add seeded dataset generator cli
+- **synthetic**: add ground-truth label schema and manifest
+- **synthetic**: add phone-photo look and degradation profiles
+- **synthetic**: add skew, blur, noise, contrast and jpeg augmentations
+- **synthetic**: render documents in card, table and certificate layouts
+- **synthetic**: add system font discovery for latin and urdu text
+- **synthetic**: add entry test scorecards and fee challans
+- **synthetic**: add matric and fsc result cards in board layouts
+- **synthetic**: add identity and domicile document content
+- **synthetic**: add fictional applicant generator
+
+### Bug Fixes
+
+- **synthetic**: keep fsc sessions within the admission cycle
+
+### Documentation
+
+- **synthetic**: document the generator and add a make target
+
 ## v0.2.0 (2026-11-01)
 
 ### Features
