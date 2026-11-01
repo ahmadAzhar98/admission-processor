@@ -25,6 +25,11 @@ from common.repositories.memory import (
     InMemoryDocumentRepository,
     InMemoryResultRepository,
 )
+from common.repositories.notifications import (
+    InMemoryNotificationLog,
+    NotificationLog,
+    PostgresNotificationLog,
+)
 from common.repositories.postgres import (
     PostgresAuditRepository,
     PostgresDocumentRepository,
@@ -54,6 +59,7 @@ class Runtime:
     publisher: EventPublisher
     examples: ExampleRepository
     reviews: ReviewRepository
+    notifications: NotificationLog
     database: Database | None = None
     ocr: OcrEngine | None = None
     llm: LlmClient | None = None
@@ -97,6 +103,7 @@ def build_runtime(settings: Settings) -> Runtime:
         publisher=GatewayPublisher(settings.gateway_url),
         examples=PostgresExampleRepository(database),
         reviews=PostgresReviewRepository(database),
+        notifications=PostgresNotificationLog(database),
         database=database,
     )
 
@@ -116,6 +123,7 @@ class InMemoryRuntime(Runtime):
     publisher: InMemoryPublisher
     examples: InMemoryExampleRepository
     reviews: InMemoryReviewRepository
+    notifications: InMemoryNotificationLog
 
 
 def in_memory_runtime(tenants_dir: Path, settings: Settings | None = None) -> InMemoryRuntime:
@@ -131,6 +139,7 @@ def in_memory_runtime(tenants_dir: Path, settings: Settings | None = None) -> In
         publisher=InMemoryPublisher(),
         examples=InMemoryExampleRepository(),
         reviews=InMemoryReviewRepository(),
+        notifications=InMemoryNotificationLog(),
     )
 
 
