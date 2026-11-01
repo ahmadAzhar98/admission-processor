@@ -55,7 +55,7 @@ disallow_untyped_defs = false
 disallow_incomplete_defs = false
 
 [tool.commitizen]
-name = "cz_conventional_commits"
+name = "cz_customize"
 version_provider = "pep621"
 tag_format = "v$version"
 major_version_zero = true
@@ -63,6 +63,30 @@ annotated_tag = true
 update_changelog_on_bump = true
 changelog_file = "CHANGELOG.md"
 bump_message = "chore: release v$new_version"
+
+# Same Conventional Commits rules as cz_conventional_commits, narrowed to the
+# types and scopes allowed by CLAUDE.md, with a 72-char lowercase header, and
+# with every type listed in the changelog rather than only feat/fix/perf.
+[tool.commitizen.customize]
+message_template = "{{change_type}}{% if scope %}({{scope}}){% endif %}: {{message}}"
+example = "feat(extract): add cnic field parser"
+schema = "<type>(<scope>): <summary>\n\n<body>\n\n<footer>"
+schema_pattern = '(?s)(?=[^\n]{1,72}(?:\n|$))(build|chore|ci|docs|feat|fix|perf|refactor|revert|test)(\((intake|quality|classify|extract|validate|crosscheck|decide|notify|tenant|common|synthetic|infra|ui|docs|deps)\))?!?: [^A-Z\s][^\n\r]*((\n\n.*)|(\s*))?$'
+commit_parser = '^(?P<change_type>build|chore|ci|docs|feat|fix|perf|refactor|revert|test)(?:\((?P<scope>[^()\r\n]*)\))?(?P<breaking>!)?:\s(?P<message>.*)?'
+changelog_pattern = '^(build|chore|ci|docs|feat|fix|perf|refactor|revert|test)(\(.+\))?!?:'
+change_type_order = ["Features", "Bug Fixes", "Performance", "Refactoring", "Tests", "Documentation", "Build", "CI", "Chores", "Reverts"]
+
+[tool.commitizen.customize.change_type_map]
+feat = "Features"
+fix = "Bug Fixes"
+perf = "Performance"
+refactor = "Refactoring"
+test = "Tests"
+docs = "Documentation"
+build = "Build"
+ci = "CI"
+chore = "Chores"
+revert = "Reverts"
 
 [tool.pytest.ini_options]
 testpaths = ["libs"]
