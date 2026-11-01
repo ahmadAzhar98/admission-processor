@@ -3,7 +3,7 @@ VENV ?= .venv
 BIN := $(VENV)/bin
 
 .DEFAULT_GOAL := help
-.PHONY: help setup lint typecheck test test-integration check format coverage clean
+.PHONY: help setup lint typecheck test test-integration check format coverage clean synthetic
 
 help: ## List available targets
 	@grep -E '^[a-zA-Z_-]+:.*?## ' $(MAKEFILE_LIST) | \
@@ -29,6 +29,12 @@ test-integration: ## Run integration tests (needs the docker compose stack)
 	$(BIN)/pytest -m integration
 
 check: lint typecheck test ## Lint, typecheck and test; must pass before every commit
+
+SEED ?= 42
+APPLICATIONS ?= 20
+
+synthetic: ## Generate a synthetic dataset (SEED, APPLICATIONS per tenant)
+	$(BIN)/python -m synthetic.generate --seed $(SEED) --applications $(APPLICATIONS) --out synthetic/output
 
 format: ## Apply ruff fixes and formatting
 	$(BIN)/ruff check --fix .
