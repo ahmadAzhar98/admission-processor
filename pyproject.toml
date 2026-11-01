@@ -44,6 +44,9 @@ select = [
   "D",    # docstrings on public API
 ]
 
+# Urdu text (templates, synthetic documents) legitimately uses these.
+allowed-confusables = ["۔", "،", "٫"]
+
 [tool.ruff.lint.pydocstyle]
 convention = "google"
 
